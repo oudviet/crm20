@@ -6,12 +6,14 @@ import { isDefined } from 'twenty-shared/utils';
 import type SMTPConnection from 'nodemailer/lib/smtp-connection';
 
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 
 @Injectable()
 export class SmtpClientProvider {
   constructor(
     private readonly secureHttpClientService: SecureHttpClientService,
+    private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
   public async getSmtpClient(
@@ -37,7 +39,9 @@ export class SmtpClientProvider {
         pass: smtpParams.password,
       },
       tls: {
-        rejectUnauthorized: false,
+        rejectUnauthorized: !this.twentyConfigService.get(
+          'EMAIL_CONNECTORS_ALLOW_SELF_SIGNED_CERT',
+        ),
       },
     };
 

@@ -363,7 +363,7 @@ async function createDesktopSdkUpload() {
       console.error("Failed to create upload token:", response.data.message);
       return null;
     } else {
-      console.log("Upload token created successfully:", response.data.upload_token);
+      console.log("Upload token created successfully");
       return response.data;
     }
   } catch (error) {
@@ -631,7 +631,7 @@ function initSDK() {
           const uploadData = await createDesktopSdkUpload();
 
           if (uploadData && uploadData.upload_token) {
-            console.log('Uploading recording with new upload token:', uploadData.upload_token);
+            console.log('Uploading recording with new upload token:', `${uploadData.upload_token.substring(0, 8)}...`);
 
             // Log the uploadRecording API call
             sdkLogger.logApiCall('uploadRecording', {
@@ -981,7 +981,7 @@ ipcMain.handle('startManualRecording', async (event, meetingId) => {
       sdkLogger.logApiCall('prepareDesktopAudioRecording');
 
       const key = await RecallAiSdk.prepareDesktopAudioRecording();
-      console.log('Prepared desktop audio recording with key:', key);
+      console.log('Prepared desktop audio recording with key:', `${key.substring(0, 8)}...`);
 
       // Create a recording token
       const uploadData = await createDesktopSdkUpload();
@@ -1016,7 +1016,7 @@ ipcMain.handle('startManualRecording', async (event, meetingId) => {
       await fileOperationManager.writeData(meetingsData);
 
       // Start recording with the key from prepareDesktopAudioRecording
-      console.log('Starting desktop recording with key:', key);
+      console.log('Starting desktop recording with key:', `${key.substring(0, 8)}...`);
 
       // Log the startRecording API call
       sdkLogger.logApiCall('startRecording', {
@@ -1334,7 +1334,7 @@ async function createMeetingNoteAndRecord(platformName) {
           windowId: detectedMeeting.window.id
         });
       } else {
-        console.log('Starting recording with upload token:', uploadData.upload_token);
+        console.log('Starting recording with upload token:', `${uploadData.upload_token.substring(0, 8)}...`);
 
         // Store Recall upload/recording IDs on the meeting for later linking
         const savedMeeting = meetingsData.pastMeetings.find(m => m.id === id);

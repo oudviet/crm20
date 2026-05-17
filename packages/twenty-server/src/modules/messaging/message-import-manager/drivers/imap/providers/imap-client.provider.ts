@@ -6,6 +6,7 @@ import { CustomError, isDefined } from 'twenty-shared/utils';
 
 import { type ImapSmtpCaldavParams } from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { MessageImportDriverExceptionCode } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
 import { parseImapAuthenticationError } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/parse-imap-authentication-error.util';
@@ -24,6 +25,7 @@ export class ImapClientProvider {
 
   constructor(
     private readonly secureHttpClientService: SecureHttpClientService,
+    private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
   async getClient(
@@ -88,7 +90,9 @@ export class ImapClientProvider {
       },
       logger: false,
       tls: {
-        rejectUnauthorized: false,
+        rejectUnauthorized: !this.twentyConfigService.get(
+          'EMAIL_CONNECTORS_ALLOW_SELF_SIGNED_CERT',
+        ),
       },
       connectionTimeout: ImapClientProvider.CONNECTION_TIMEOUT_MS,
       greetingTimeout: ImapClientProvider.GREETING_TIMEOUT_MS,

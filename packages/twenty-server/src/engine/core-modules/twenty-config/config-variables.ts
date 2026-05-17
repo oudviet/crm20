@@ -392,6 +392,15 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.EMAIL_SETTINGS,
+    description:
+      'Allow self-signed certificates for IMAP/SMTP/CalDAV email connectors. Disable in production for strict TLS verification.',
+    type: ConfigVariableType.BOOLEAN,
+  })
+  @IsOptional()
+  EMAIL_CONNECTORS_ALLOW_SELF_SIGNED_CERT = true;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.EMAIL_SETTINGS,
     description: 'SMTP port for sending emails',
     type: ConfigVariableType.NUMBER,
   })

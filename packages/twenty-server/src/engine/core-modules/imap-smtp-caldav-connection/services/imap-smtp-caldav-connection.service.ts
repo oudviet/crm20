@@ -16,6 +16,7 @@ import {
 } from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { CalDavClientService } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/services/caldav-client.service';
 import { CalDavFetchEventsService } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/services/caldav-fetch-events.service';
 
@@ -28,6 +29,7 @@ export class ImapSmtpCaldavService {
     @InjectRepository(ConnectedAccountEntity)
     private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
     private readonly secureHttpClientService: SecureHttpClientService,
+    private readonly twentyConfigService: TwentyConfigService,
     private readonly caldavClientService: CalDavClientService,
     private readonly caldavFetchEventsService: CalDavFetchEventsService,
   ) {}
@@ -49,7 +51,9 @@ export class ImapSmtpCaldavService {
       },
       logger: false,
       tls: {
-        rejectUnauthorized: false,
+        rejectUnauthorized: !this.twentyConfigService.get(
+          'EMAIL_CONNECTORS_ALLOW_SELF_SIGNED_CERT',
+        ),
       },
     });
 
@@ -120,7 +124,9 @@ export class ImapSmtpCaldavService {
         pass: params.password,
       },
       tls: {
-        rejectUnauthorized: false,
+        rejectUnauthorized: !this.twentyConfigService.get(
+          'EMAIL_CONNECTORS_ALLOW_SELF_SIGNED_CERT',
+        ),
       },
     });
 

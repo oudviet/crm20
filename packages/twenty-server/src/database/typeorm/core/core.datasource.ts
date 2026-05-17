@@ -37,6 +37,12 @@ const getLoggingConfig = (): LogLevel[] => {
 
 const isJest = process.argv.some((arg) => arg.includes('jest'));
 
+if (process.env.PG_SSL_ALLOW_SELF_SIGNED === 'true') {
+  console.warn(
+    '[SECURITY] PG_SSL_ALLOW_SELF_SIGNED is enabled — TLS certificate verification is disabled for database connections.',
+  );
+}
+
 export const typeORMCoreModuleOptions: TypeOrmModuleOptions = {
   url: process.env.PG_DATABASE_URL,
   type: 'postgres',
